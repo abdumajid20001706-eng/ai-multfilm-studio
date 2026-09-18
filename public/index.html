@@ -113,86 +113,60 @@
       <div id="result"></div>
     </div>
   </div>
+function createCartoon() {
+  const result = document.getElementById("result");
 
+  const idea = document.getElementById("idea").value.trim();
+  const language = document.getElementById("language").value;
+  const style = document.getElementById("style").value;
+  const characters = document.getElementById("characters").value.trim();
+
+  if (!idea) {
+    result.innerHTML = "❗ Avval multfilm g‘oyasini yozing.";
+    return;
+  }
+
+  const heroList = characters || "Quyoncha, Ayiqcha";
+
+  result.innerHTML = `
+    <h2>🎉 Demo multfilm tayyor!</h2>
+
+    <h3>📖 Ssenariy</h3>
+    <p>
+      Bir kuni ${heroList} sehrli o‘rmonga kirib qolishdi.
+      Ular o‘rmonda sirli yo‘lni topishdi va yangi sarguzashtni boshlashdi.
+      ${idea}.
+      Qahramonlar bir-biriga yordam berib, muammoni birgalikda hal qilishdi.
+      Oxirida ular uylariga xursand bo‘lib qaytishdi.
+    </p>
+
+    <h3>🎭 Qahramonlar</h3>
+    <p>${heroList}</p>
+
+    <h3>🎨 Multfilm uslubi</h3>
+    <p>${style}</p>
+
+    <h3>🌍 Til</h3>
+    <p>
+      ${language === "uzbek" ? "O‘zbek tili" :
+        language === "russian" ? "Rus tili" : "Ingliz tili"}
+    </p>
+
+    <h3>🎬 Sahna</h3>
+    <p>
+      Sehrli o‘rmon, rang-barang daraxtlar, yumshoq yorug‘lik,
+      ${heroList} sarguzashtni davom ettirmoqda.
+    </p>
+
+    <hr>
+
+    <p><strong>ℹ️ Hozir DEMO rejimida ishlayapti.</strong></p>
+    <p>
+      Keyinchalik haqiqiy AI orqali rasm, ovoz va video yaratishni ulaymiz.
+    </p>
+  `;
+}
   <script>
-    async function createCartoon() {
-      const result = document.getElementById("result");
-
-      const idea = document.getElementById("idea").value.trim();
-      const language = document.getElementById("language").value;
-      const style = document.getElementById("style").value;
-      const characters = document.getElementById("characters").value.trim();
-
-      if (!idea) {
-        result.innerHTML = "❗ Avval multfilm g‘oyasini yozing.";
-        return;
-      }
-
-      result.innerHTML = '<p class="loading">⏳ Multfilm yaratilmoqda. Biroz kuting...</p>';
-
-      try {
-        const response = await fetch("/api/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            idea,
-            language,
-            style,
-            characters
-          })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Xatolik yuz berdi");
-        }
-
-        let html = "<h2>🎉 Natija</h2>";
-
-        if (data.script) {
-          html += "<h3>📜 Ssenariy</h3>";
-          html += "<p>" + escapeHtml(data.script) + "</p>";
-        }
-
-        if (data.image) {
-          html += "<h3>🖼️ Rasm</h3>";
-          html += '<img src="' + data.image + '" alt="Multfilm rasmi">';
-        }
-
-        if (data.audio) {
-          html += "<h3>🔊 Ovoz</h3>";
-          html += '<audio controls src="' + data.audio + '"></audio>';
-        }
-
-        if (data.video) {
-          html += "<h3>🎞️ Video</h3>";
-          html += '<video controls src="' + data.video + '"></video>';
-        }
-
-        if (data.message) {
-          html += "<p>" + escapeHtml(data.message) + "</p>";
-        }
-
-        result.innerHTML = html;
-
-      } catch (error) {
-        result.innerHTML =
-          "❌ Xatolik: " + escapeHtml(error.message) +
-          "<br><br>Render loglarini tekshiring.";
-      }
-    }
-
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-  </script>
+    
 </body>
   </html>
