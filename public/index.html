@@ -168,6 +168,33 @@ function createCartoon() {
   `;
 }
   </script>
-    
+ <button onclick="generateScript()">
+  🧠 AI ssenariy yaratish
+</button>
+
+<script>
+function generateScript() {
+  const idea = document.getElementById("idea").value.trim();
+  const result = document.getElementById("result");
+
+  if (!idea) {
+    result.innerHTML = "❗ Avval multfilm g‘oyasini yozing.";
+    return;
+  }
+
+  result.innerHTML = `
+    <h2>🧠 AI Ssenariy</h2>
+    <p>
+      ${idea} asosida qiziqarli multfilm ssenariysi tayyorlanmoqda...
+    </p>
+    <p>
+      🎬 1-sahna: Qahramon voqeani boshlaydi.<br>
+      🎬 2-sahna: Muammo paydo bo‘ladi.<br>
+      🎬 3-sahna: Qahramon yechim izlaydi.<br>
+      🎬 4-sahna: Sarguzashtning yakuni.
+    </p>
+  `;
+}
+</script>   
 </body>
   </html>
