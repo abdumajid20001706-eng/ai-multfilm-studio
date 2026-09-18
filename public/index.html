@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Multfilm Studio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f4f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #673ab7;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px #0001;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #673ab7;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #512da8;
+    }
+
+    #result {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    img, audio, video {
+      max-width: 100%;
+      margin-top: 15px;
+      border-radius: 10px;
+    }
+
+    .loading {
+      color: #673ab7;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 AI Multfilm Studio</h1>
+
+    <div class="card">
+      <label>Multfilm g‘oyasi</label>
+      <textarea id="idea" placeholder="Masalan: Quyoncha va ayiqchaning sehrli o‘rmondagi sarguzashti"></textarea>
+
+      <label>Multfilm tili</label>
+      <select id="language">
+        <option value="uzbek">O‘zbek tili</option>
+        <option value="russian">Rus tili</option>
+        <option value="english">Ingliz tili</option>
+      </select>
+
+      <label>Multfilm uslubi</label>
+      <select id="style">
+        <option value="3D cartoon">3D multfilm</option>
+        <option value="anime">Anime</option>
+        <option value="Disney-style cartoon">Klassik multfilm</option>
+        <option value="realistic cartoon">Realistik multfilm</option>
+      </select>
+
+      <label>Qahramonlar</label>
+      <input id="characters" placeholder="Masalan: quyoncha, ayiqcha, sehrgar chol">
+
+      <button onclick="createCartoon()">🚀 Multfilm yaratish</button>
+
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    async function createCartoon() {
+      const result = document.getElementById("result");
+
+      const idea = document.getElementById("idea").value.trim();
+      const language = document.getElementById("language").value;
+      const style = document.getElementById("style").value;
+      const characters = document.getElementById("characters").value.trim();
+
+      if (!idea) {
+        result.innerHTML = "❗ Avval multfilm g‘oyasini yozing.";
+        return;
+      }
+
+      result.innerHTML = '<p class="loading">⏳ Multfilm yaratilmoqda. Biroz kuting...</p>';
+
+      try {
+        const response = await fetch("/api/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idea,
+            language,
+            style,
+            characters
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Xatolik yuz berdi");
+        }
+
+        let html = "<h2>🎉 Natija</h2>";
+
+        if (data.script) {
+          html += "<h3>📜 Ssenariy</h3>";
+          html += "<p>" + escapeHtml(data.script) + "</p>";
+        }
+
+        if (data.image) {
+          html += "<h3>🖼️ Rasm</h3>";
+          html += '<img src="' + data.image + '" alt="Multfilm rasmi">';
+        }
+
+        if (data.audio) {
+          html += "<h3>🔊 Ovoz</h3>";
+          html += '<audio controls src="' + data.audio + '"></audio>';
+        }
+
+        if (data.video) {
+          html += "<h3>🎞️ Video</h3>";
+          html += '<video controls src="' + data.video + '"></video>';
+        }
+
+        if (data.message) {
+          html += "<p>" + escapeHtml(data.message) + "</p>";
+        }
+
+        result.innerHTML = html;
+
+      } catch (error) {
+        result.innerHTML =
+          "❌ Xatolik: " + escapeHtml(error.message) +
+          "<br><br>Render loglarini tekshiring.";
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+  </html>
